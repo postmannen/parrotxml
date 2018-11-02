@@ -31,10 +31,13 @@ func main() {
 	//Start with the first line
 	lineNR := 1
 
-	tags := []tag{
+	tagsStart := []tag{
 		tag{name: "<project", token: "projectStart"},
 		tag{name: "<class", token: "classStart"},
 		tag{name: "<cmd", token: "cmdStart"},
+	}
+
+	tagsEnd := []tag{
 		tag{name: "</project>", token: "projectEnd"},
 		tag{name: "</class>", token: "classEnd"},
 		tag{name: "</cmd>", token: "cmdEnd"},
@@ -56,47 +59,22 @@ func main() {
 		line = []byte(tmpLine)
 		//printLine(line)
 
-		//----------------------------------------------
-
-		//Look for the start tag called <project>
-		found := findTag("<project", line)
-		if found {
-			tagStack.push("project")
+		//Look for all the start tags, and if found, add to stack
+		for i := range tagsStart {
+			//Look for the start tag called <project>
+			found := findTag(tagsStart[i].name, line)
+			if found {
+				tagStack.push(tagsStart[i].token)
+			}
 		}
 
-		{
-			//Look for the start tag called <class>
-			found = findTag("<class", line)
-			if found {
-				tagStack.push("class")
-			}
-
-			{
-				//Look for the start tag called <cmd>
-				found = findTag("<cmd", line)
-				if found {
-					tagStack.push("cmd")
-				}
-
-				//Look for the end tag called </cmd>
-				found = findTag("</cmd>", line)
-				if found {
-					tagStack.pop()
-				}
-			}
-
-			//Look for the end tag called </class>
-			found = findTag("</class>", line)
+		//Look for all the end tags, and if found, add to stack
+		for i := range tagsEnd {
+			//Look for the start tag called <project>
+			found := findTag(tagsEnd[i].name, line)
 			if found {
 				tagStack.pop()
 			}
-		}
-
-		//Look for the end tag called </project>
-		found = findTag("</project>", line)
-		if found {
-			fmt.Println("Found project end on lineNR : ", lineNR)
-			tagStack.pop()
 		}
 
 		lineNR++
