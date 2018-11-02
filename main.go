@@ -9,6 +9,11 @@ import (
 	"strings"
 )
 
+type tag struct {
+	name  string
+	token string
+}
+
 func main() {
 
 	//------------------------------
@@ -25,6 +30,15 @@ func main() {
 
 	//Start with the first line
 	lineNR := 1
+
+	tags := []tag{
+		tag{name: "<project", token: "projectStart"},
+		tag{name: "<class", token: "classStart"},
+		tag{name: "<cmd", token: "cmdStart"},
+		tag{name: "</project>", token: "projectEnd"},
+		tag{name: "</class>", token: "classEnd"},
+		tag{name: "</cmd>", token: "cmdEnd"},
+	}
 
 	//Iterate the file and the xml data, and parse values.
 	//create a stack to use
