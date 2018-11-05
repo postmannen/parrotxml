@@ -1,0 +1,6 @@
+                <comment
+				title="Wifi scan results"
+				desc="Wifi scan results.\n
+				Please note that the list is not complete until you receive the event [WifiScanEnded](#1-14-1)."
+				support="0901;090c;090e"
+				triggered="for each wifi network scanned after a [ScanWifi](#1-13-0)"/>

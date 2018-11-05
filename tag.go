@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"strings"
 )
 
 //stack will keep track of where we are working in the iteration,
@@ -19,23 +20,20 @@ func newTagStack() *tagStack {
 //push will add another item to the end of the stack with a normal append
 func (s *tagStack) push(d string) {
 	s.data = append(s.data, d)
-	fmt.Println("DEBUG: Putting on stack : ", s)
+	//fmt.Println("DEBUG: Putting on stack : ", s)
 }
 
 //pop will remove the last element of the stack
 func (s *tagStack) pop() {
-	fmt.Println("DEBUG: Before pop:", s)
+	//fmt.Println("DEBUG: Before pop:", s)
 	last := len(s.data)
 	// ---
 	s.data = append(s.data[0:0], s.data[:last-1]...)
-	fmt.Println("DEBUG: After pop:", s)
+	//fmt.Println("DEBUG: After pop:", s)
 
 }
 
 // =============================================================================
-
-type xmlTree struct {
-}
 
 // =============================================================================
 
@@ -53,52 +51,22 @@ func printLine(line []byte) {
 func findTag(theWord string, line []byte) (found bool) {
 	var tag string
 	if len(line) > 0 {
+		//check at the beginning of the line
 		tag = string(line[0:len(theWord)])
 		if tag == theWord {
+			//fmt.Println("word found while slicing : ", tag)
+			return true
+		}
+
+		//check at the end of the line, some tags like comments
+		// end the tag on a later line with />
+		end := strings.HasSuffix(string(line), theWord)
+		if end {
+			//fmt.Println("word found while slicing at the end of line: ", theWord)
 			return true
 		}
 	}
 	return false
-}
-
-//findWord looks for a word, and returns the position the last character found in slice.
-// Returns zero if no word was found.
-func findWord(line []byte, myWordString string) (lastPosition int) {
-	//find word in []byte
-	myWordByte := []byte(myWordString)
-	foundWord := false
-
-	for linePosition := 0; linePosition < len(line)-len(myWordByte); linePosition++ {
-		wordPosition := 0
-		for {
-
-			//Since the iteration over the word using wordPosition as a counter will break out
-			// if there is a mismatch in the matching, we can be sure that the word was found
-			// if word position reaches the same value as the length of the word.
-			// And we can then return the result and exit.
-			if wordPosition >= len(myWordByte) {
-				fmt.Println("Reached the end of the word, breaking out of word loop", linePosition, wordPosition)
-				foundWord = true
-				lastPosition = linePosition + wordPosition
-				return lastPosition
-			}
-
-			//If there is no match break out of the loop imediatly, since there is no reason
-			// to continue if one fails. Better to break out of the inner for loop and start
-			// the iteration of the next charater and see if we are more lucky.
-			if line[linePosition+wordPosition] != myWordByte[wordPosition] {
-				break
-			}
-
-			wordPosition++
-		}
-
-		if foundWord {
-			fmt.Println("Breaking out of outer loop")
-			break
-		}
-	}
-	return 0
 }
 
 //checkForClosingBracket

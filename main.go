@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -33,12 +34,14 @@ func main() {
 		tag{name: "<project", token: "projectStart"},
 		tag{name: "<class", token: "classStart"},
 		tag{name: "<cmd", token: "cmdStart"},
+		tag{name: "<comment", token: "commentStart"},
 	}
 
 	tagsEnd := []tag{
 		tag{name: "</project>", token: "projectEnd"},
 		tag{name: "</class>", token: "classEnd"},
 		tag{name: "</cmd>", token: "cmdEnd"},
+		tag{name: "/>", token: "commentEnd"},
 	}
 
 	//Iterate the file and the xml data, and parse values.
@@ -63,6 +66,7 @@ func main() {
 			found := findTag(tagsStart[i].name, line)
 			if found {
 				tagStack.push(tagsStart[i].token)
+				fmt.Println(tagsStart[i].token)
 			}
 		}
 
@@ -72,6 +76,7 @@ func main() {
 			found := findTag(tagsEnd[i].name, line)
 			if found {
 				tagStack.pop()
+				fmt.Println(tagsEnd[i].token)
 			}
 		}
 
