@@ -15,8 +15,9 @@ type tag struct {
 
 func main() {
 
-	//------------------------------
+	//=================INITALIZATION===================
 
+	//Open file for reading
 	fileName := "ardrone3.xml"
 	f, err := os.Open(fileName)
 	if err != nil {
@@ -43,6 +44,8 @@ func main() {
 		tag{name: "</cmd>", token: "cmdEnd"},
 		tag{name: "/>", token: "commentEnd"},
 	}
+
+	// =================Iterate and find=====================
 
 	//Iterate the file and the xml data, and parse values.
 	//create a stack to use
