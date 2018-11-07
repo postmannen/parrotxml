@@ -56,6 +56,8 @@ func findChrPositions(s string, chr byte) (equalPosition []int) {
 	for i := 0; i < len(s); i++ {
 		//find the positions of the "=" character
 		if s[i] == byte(chr) {
+			//fmt.Println("DEBUG: line : ", s)
+			//fmt.Println("DEBUG: chr = ", string(chr), " Found chr at", equalPosition)
 			equalPosition = append(equalPosition, i)
 		}
 	}

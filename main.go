@@ -36,6 +36,7 @@ func main() {
 		tag{name: "<class", token: "classStart"},
 		tag{name: "<cmd", token: "cmdStart"},
 		tag{name: "<comment", token: "commentStart"},
+		tag{name: "<enum", token: "enumStart"},
 	}
 
 	tagsEnd := []tag{
@@ -43,6 +44,7 @@ func main() {
 		tag{name: "</class>", token: "classEnd"},
 		tag{name: "</cmd>", token: "cmdEnd"},
 		tag{name: "/>", token: "commentEnd"},
+		tag{name: "</enum>", token: "enumEnd"},
 	}
 
 	// =================Iterate and find=====================
@@ -63,20 +65,25 @@ func main() {
 		line = []byte(tmpLine)
 		//printLine(line)
 
-		//Look for all the start tags, and if found, add to stack
+		// -----------------------Do the actual iteration-------------------
+
+		found := false
+
+		//Look for all the start tags.
 		for i := range tagsStart {
-			//Look for the start tag called <project>
-			found := findTag(tagsStart[i].name, line)
+			found = findTag(tagsStart[i].name, line)
 			if found {
+				attributeNames, attributeValues := getAttributes(string(line))
+				fmt.Printf("--- Attributes : name : %v, value %v \n", attributeNames, attributeValues)
+
 				tagStack.push(tagsStart[i].token)
 				fmt.Println(tagsStart[i].token)
 			}
 		}
 
-		//Look for all the end tags, and if found, add to stack
+		//Look for all the end tags.
 		for i := range tagsEnd {
-			//Look for the start tag called <project>
-			found := findTag(tagsEnd[i].name, line)
+			found = findTag(tagsEnd[i].name, line)
 			if found {
 				tagStack.pop()
 				fmt.Println(tagsEnd[i].token)
