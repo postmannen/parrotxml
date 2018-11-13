@@ -50,7 +50,10 @@ func main() {
 	// =================Iterate and find=====================
 
 	//Iterate the file and the xml data, and parse values.
-	//create a stack to use
+	// create a stack to use.
+	// The nice thing about using a stack for your tags found
+	// is that you will know if there was a closing tag for
+	// each start tag.
 	tagStack := newTagStack()
 	for {
 		//read a line
@@ -69,7 +72,7 @@ func main() {
 
 		found := false
 
-		//Look for all the start tags.
+		//Look for start tag.
 		for i := range tagsStart {
 			found = findTag(tagsStart[i].name, line)
 			if found {
@@ -81,7 +84,7 @@ func main() {
 			}
 		}
 
-		//Look for all the end tags.
+		//Look for end tag.
 		for i := range tagsEnd {
 			found = findTag(tagsEnd[i].name, line)
 			if found {

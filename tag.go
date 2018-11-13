@@ -20,7 +20,7 @@ func newTagStack() *tagStack {
 //push will add another item to the end of the stack with a normal append
 func (s *tagStack) push(d string) {
 	s.data = append(s.data, d)
-	fmt.Printf("DEBUG: Putting on stack : %#v\n", s)
+	fmt.Printf("DEBUG: PUSH on stack : %#v\n", s)
 }
 
 //pop will remove the last element of the stack
@@ -29,39 +29,22 @@ func (s *tagStack) pop() {
 	last := len(s.data)
 	// ---
 	s.data = append(s.data[0:0], s.data[:last-1]...)
-	fmt.Printf("DEBUG: After pop:%#v\n", s)
+	fmt.Printf("DEBUG: POP stack:%#v\n", s)
 
 }
 
 // =============================================================================
 
-// =============================================================================
-
-func printLine(line []byte) {
-	//fmt.Printf("Line : %v \n Type %T\n", line, line)
-	for i := 0; i < len(line); i++ {
-		character := string(line[i])
-		fmt.Print(character)
-
-	}
-	fmt.Println()
-}
-
-//find tag will check if there is a <project> tag in xml
+//findTag will check for tags at the start and end of a line
 func findTag(theWord string, line []byte) (found bool) {
-	var tag string
 	if len(line) > 0 {
-		//check at the beginning of the line
-		tag = string(line[0:len(theWord)])
-		if tag == theWord {
-			//fmt.Println("word found while slicing : ", tag)
+		found = strings.HasPrefix(string(line), theWord)
+		if found {
+			//fmt.Println("word found while slicing at the start of line: ", theWord)
 			return true
 		}
-
-		//check at the end of the line, some tags like comments
-		// end the tag on a later line with />
-		end := strings.HasSuffix(string(line), theWord)
-		if end {
+		found = strings.HasSuffix(string(line), theWord)
+		if found {
 			//fmt.Println("word found while slicing at the end of line: ", theWord)
 			return true
 		}
