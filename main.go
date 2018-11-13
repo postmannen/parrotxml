@@ -69,12 +69,12 @@ func main() {
 
 		// -----------------------Do the actual iteration-------------------
 
-		found := false
+		foundTag := false
 
 		//Look for start tag.
 		for i := range tagsStart {
-			found = findTag(tagsStart[i].name, line)
-			if found {
+			foundTag = findTag(tagsStart[i].name, line)
+			if foundTag {
 				attributeNames, attributeValues := getAttributes(string(line))
 				fmt.Printf("--- Attributes : name : %v, value %v \n", attributeNames, attributeValues)
 
@@ -85,8 +85,8 @@ func main() {
 
 		//Look for end tag.
 		for i := range tagsEnd {
-			found = findTag(tagsEnd[i].name, line)
-			if found {
+			foundTag = findTag(tagsEnd[i].name, line)
+			if foundTag {
 				tagStack.pop()
 				fmt.Println(tagsEnd[i].token)
 			}
