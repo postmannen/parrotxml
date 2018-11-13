@@ -57,15 +57,14 @@ func main() {
 	tagStack := newTagStack()
 	for {
 		//read a line
-		line, _, err := fReader.ReadLine()
+		readLine, _, err := fReader.ReadLine()
 		if err != nil {
 			log.Printf("Error: bufio.ReadLine: %v\n", err)
 			break
 		}
 
 		//Remove leading spaces in the current line
-		tmpLine := strings.TrimSpace(string(line))
-		line = []byte(tmpLine)
+		line := strings.TrimSpace(string(readLine))
 		//printLine(line)
 
 		// -----------------------Do the actual iteration-------------------

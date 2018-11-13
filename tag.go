@@ -36,14 +36,14 @@ func (s *tagStack) pop() {
 // =============================================================================
 
 //findTag will check for tags at the start and end of a line
-func findTag(theWord string, line []byte) (found bool) {
+func findTag(theWord string, line string) (found bool) {
 	if len(line) > 0 {
-		found = strings.HasPrefix(string(line), theWord)
+		found = strings.HasPrefix(line, theWord)
 		if found {
 			//fmt.Println("word found while slicing at the start of line: ", theWord)
 			return true
 		}
-		found = strings.HasSuffix(string(line), theWord)
+		found = strings.HasSuffix(line, theWord)
 		if found {
 			//fmt.Println("word found while slicing at the end of line: ", theWord)
 			return true
