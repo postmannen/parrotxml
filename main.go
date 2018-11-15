@@ -13,12 +13,48 @@ type tag struct {
 	token string
 }
 
+var tagsStart = []tag{
+	tag{name: "<project", token: "projectStart"},
+	tag{name: "<class", token: "classStart"},
+	tag{name: "<cmd", token: "cmdStart"},
+	tag{name: "<comment", token: "commentStart"},
+	tag{name: "<enum", token: "enumStart"},
+	tag{name: "<arg", token: "argStart"},
+}
+
+var tagsEnd = []tag{
+	tag{name: "</project>", token: "projectEnd"},
+	tag{name: "</class>", token: "classEnd"},
+	tag{name: "</cmd>", token: "cmdEnd"},
+	tag{name: "/>", token: "commentEnd"},
+	tag{name: "</enum>", token: "enumEnd"},
+	tag{name: "</arg>", token: "argEnd"},
+}
+
+var fileName = "ardrone3.xml"
+
+type lexer struct {
+	currentLine string
+	nextLine    string
+	bufReader   *bufio.Reader
+}
+
+//readLines will allways read the next line, by copying to previous nextLine into currentLine,
+// and then do a read from the buffer and put it into nextLine
+// This means that the actual reading of the file allways will be one step ahead of currentLine
+// which is the line we normally work on in the rest of the program.
+func (l *lexer) readLines() {
+	ln, _, err := l.bufReader.ReadLine()
+	if err != nil {
+		log.Printf("Error: bufio.ReadLine: %v\n", err)
+	}
+	l.currentLine = l.nextLine
+	l.nextLine = strings.TrimSpace(string(ln))
+}
+
 func main() {
 
-	//=================INITALIZATION===================
-
 	//Open file for reading
-	fileName := "ardrone3.xml"
 	f, err := os.Open(fileName)
 	if err != nil {
 		log.Printf("Error: os.Open: %v\n", err)
@@ -27,48 +63,22 @@ func main() {
 
 	//bufio lets us read files line by line
 	fReader := bufio.NewReader(f)
-
-	//Start with the first line
 	lineNR := 1
-
-	tagsStart := []tag{
-		tag{name: "<project", token: "projectStart"},
-		tag{name: "<class", token: "classStart"},
-		tag{name: "<cmd", token: "cmdStart"},
-		tag{name: "<comment", token: "commentStart"},
-		tag{name: "<enum", token: "enumStart"},
-	}
-
-	tagsEnd := []tag{
-		tag{name: "</project>", token: "projectEnd"},
-		tag{name: "</class>", token: "classEnd"},
-		tag{name: "</cmd>", token: "cmdEnd"},
-		tag{name: "/>", token: "commentEnd"},
-		tag{name: "</enum>", token: "enumEnd"},
-	}
 
 	// =================Iterate and find=====================
 
-	//Iterate the file and the xml data, and parse values.
-	// create a stack to use.
-	// The nice thing about using a stack for your tags found
-	// is that you will know if there was a closing tag for
-	// each start tag.
+	//Iterate the file and the xml data, and parse values. Create a stack to use.
+	// The nice thing about using a stack for your tags found is that you will know
+	// if there was a closing tag for each start tag.
 	tagStack := newTagStack()
 	for {
-		//read a line
 		readLine, _, err := fReader.ReadLine()
 		if err != nil {
 			log.Printf("Error: bufio.ReadLine: %v\n", err)
 			break
 		}
 
-		//Remove leading spaces in the current line
 		line := strings.TrimSpace(string(readLine))
-		//printLine(line)
-
-		// -----------------------Do the actual iteration-------------------
-
 		foundTag := false
 
 		//Look for start tag.
@@ -76,10 +86,10 @@ func main() {
 			foundTag = findTag(tagsStart[i].name, line)
 			if foundTag {
 				attributeNames, attributeValues := getAttributes(string(line))
-				fmt.Printf("--- Attributes : name : %v, value %v \n", attributeNames, attributeValues)
-
+				fmt.Println("-----------------------------------------------------------------")
 				tagStack.push(tagsStart[i].token)
-				fmt.Println(tagsStart[i].token)
+				fmt.Println("--- Tag: ", tagsStart[i].token)
+				fmt.Printf("--- Attributes: name : %v, value %v \n", attributeNames, attributeValues)
 			}
 		}
 
