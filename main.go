@@ -105,6 +105,13 @@ func main() {
 			foundTag = findTag(tagsStart[i].name, lex.currentLine)
 			if foundTag {
 				lex.tag = tagsStart[i]
+
+				//If it is a comment block it spans several lines, and we want to combine
+				// them before we lex for the attributes.
+				if lex.tag.token == "commentStart" {
+					lex.combineCommentLines()
+				}
+
 				lex.getAttributes()
 				fmt.Println("-----------------------------------------------------------------")
 				tagStack.push(tagsStart[i].token)

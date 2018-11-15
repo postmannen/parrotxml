@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"strings"
 )
 
 //chrPositions , finds the positions containing a chr in a string
@@ -127,4 +128,27 @@ func (l *lexer) getAttributes() {
 	}
 
 	l.attributes.value = findLettersBetween(l.currentLine, nextChrPositions, nextNextChrPositions)
+}
+
+//readCommentBlock will read another line, and add that line to the current line.
+// If an end tag "/>" is found, it will break out of the for loop, and exit.
+func (l *lexer) combineCommentLines() {
+	fmt.Println("*********************************COMMENT**************************")
+	newLine := l.currentLine
+	for {
+		err := l.readLines()
+		if err != nil {
+			fmt.Println("Error: failed reading line inside readComment func: ", err)
+			break
+		}
+
+		newLine = fmt.Sprintf("%v %v", newLine, l.currentLine)
+
+		if strings.HasSuffix(l.currentLine, "/>") {
+			l.currentLine = newLine
+			break
+
+		}
+
+	}
 }
