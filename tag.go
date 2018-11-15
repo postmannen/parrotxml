@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 )
 
@@ -29,7 +30,12 @@ func (s *tagStack) pop() {
 	last := len(s.data)
 	// ---
 	s.data = append(s.data[0:0], s.data[:last-1]...)
+
+	//DEBUG BELOW
 	fmt.Printf("DEBUG: POP stack:%#v\n", s)
+	if len(s.data) == 0 {
+		log.Println("*** STACK IS EMPTY ***")
+	}
 
 }
 

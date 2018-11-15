@@ -40,20 +40,21 @@ type lexer struct {
 }
 
 //readLines will allways read the next line, by copying to previous nextLine into currentLine,
-// and then do a read from the buffer and put it into nextLine
+// and then do a read from the buffer and put it into nextLine. Values are stored in the
+// lexer struct.
 // This means that the actual reading of the file allways will be one step ahead of currentLine
 // which is the line we normally work on in the rest of the program.
-func (l *lexer) readLines() {
+func (l *lexer) readLines() error {
 	ln, _, err := l.bufReader.ReadLine()
 	if err != nil {
 		log.Printf("Error: bufio.ReadLine: %v\n", err)
 	}
 	l.currentLine = l.nextLine
 	l.nextLine = strings.TrimSpace(string(ln))
+	return err
 }
 
 func main() {
-
 	//Open file for reading
 	f, err := os.Open(fileName)
 	if err != nil {
@@ -61,8 +62,10 @@ func main() {
 	}
 	defer f.Close()
 
-	//bufio lets us read files line by line
-	fReader := bufio.NewReader(f)
+	lex := &lexer{
+		bufReader: bufio.NewReader(f),
+	}
+
 	lineNR := 1
 
 	// =================Iterate and find=====================
@@ -71,21 +74,21 @@ func main() {
 	// The nice thing about using a stack for your tags found is that you will know
 	// if there was a closing tag for each start tag.
 	tagStack := newTagStack()
+	doneReading := false
 	for {
-		readLine, _, err := fReader.ReadLine()
+		err := lex.readLines()
 		if err != nil {
-			log.Printf("Error: bufio.ReadLine: %v\n", err)
-			break
+			log.Println("Error: Reading lines from buffer: ", err)
+			doneReading = true
 		}
 
-		line := strings.TrimSpace(string(readLine))
-		foundTag := false
+		var foundTag bool
 
 		//Look for start tag.
 		for i := range tagsStart {
-			foundTag = findTag(tagsStart[i].name, line)
+			foundTag = findTag(tagsStart[i].name, lex.currentLine)
 			if foundTag {
-				attributeNames, attributeValues := getAttributes(string(line))
+				attributeNames, attributeValues := getAttributes(string(lex.currentLine))
 				fmt.Println("-----------------------------------------------------------------")
 				tagStack.push(tagsStart[i].token)
 				fmt.Println("--- Tag: ", tagsStart[i].token)
@@ -95,7 +98,7 @@ func main() {
 
 		//Look for end tag.
 		for i := range tagsEnd {
-			foundTag = findTag(tagsEnd[i].name, line)
+			foundTag = findTag(tagsEnd[i].name, lex.currentLine)
 			if foundTag {
 				tagStack.pop()
 				fmt.Println(tagsEnd[i].token)
@@ -103,6 +106,9 @@ func main() {
 		}
 
 		lineNR++
+		if doneReading {
+			break
+		}
 	}
 
 }
