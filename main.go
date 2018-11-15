@@ -39,11 +39,19 @@ var tagsEnd = []tag{
 var fileName = "ardrone3.xml"
 
 type lexer struct {
-	currentLine string
-	nextLine    string
-	bufReader   *bufio.Reader
-	tag
-	attributes
+	currentLine string        //The main line to work on
+	nextLine    string        //The next line, incase we need to check it
+	bufReader   *bufio.Reader //The whole document
+	tag                       //The tag found on line
+	attributes                //The attributes for the current tag
+}
+
+//reset sets tag and attribute values to nil.
+func (l *lexer) reset() {
+	l.attributes.value = nil
+	l.attributes.name = nil
+	l.tag.name = ""
+	l.tag.token = ""
 }
 
 //readLines will allways read the next line, by copying to previous nextLine into currentLine,
@@ -52,6 +60,7 @@ type lexer struct {
 // This means that the actual reading of the file allways will be one step ahead of currentLine
 // which is the line we normally work on in the rest of the program.
 func (l *lexer) readLines() error {
+	l.reset()
 	ln, _, err := l.bufReader.ReadLine()
 	if err != nil {
 		log.Printf("Error: bufio.ReadLine: %v\n", err)
@@ -95,6 +104,7 @@ func main() {
 		for i := range tagsStart {
 			foundTag = findTag(tagsStart[i].name, lex.currentLine)
 			if foundTag {
+				lex.tag = tagsStart[i]
 				lex.getAttributes()
 				fmt.Println("-----------------------------------------------------------------")
 				tagStack.push(tagsStart[i].token)
@@ -107,6 +117,7 @@ func main() {
 		for i := range tagsEnd {
 			foundTag = findTag(tagsEnd[i].name, lex.currentLine)
 			if foundTag {
+				lex.tag = tagsEnd[i]
 				tagStack.pop()
 				fmt.Println(tagsEnd[i].token)
 			}

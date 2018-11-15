@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"strings"
@@ -56,28 +55,4 @@ func findTag(theWord string, line string) (found bool) {
 		}
 	}
 	return false
-}
-
-//checkForClosingBracket
-//Check for opening and closing angle bracket.
-//Will return nil if both start and end bracker was found.
-func checkForClosingBracket(line []byte) error {
-	for i := 0; i < len(line); i++ {
-		character := string(line[i])
-		if character == "<" {
-			ii := 0
-			for {
-				if string(line[ii]) == ">" {
-					//fmt.Println("Found closing angle bracket at position: ", ii)
-					break
-				}
-				if ii == len(line)-1 {
-
-					return errors.New("Missing ending angle bracket")
-				}
-				ii++
-			}
-		}
-	}
-	return nil
 }

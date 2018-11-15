@@ -5,51 +5,6 @@ import (
 	"log"
 )
 
-//findWord looks for a word, and returns the position the last character found in slice.
-// Returns zero if no word was found.
-// This function can be used for finding tag attributes like "some=", if found it will
-// return the position if the equals sign "=" in the slice, which can be handy since you
-// know the attribute is to the left of the equal, and the value is to the right.
-//
-// THIS FUNCTION IS PROBABLY REPLACED BY OTHERS, AND NOT NEEDED ANYMORE.
-func findWord(line []byte, myWordString string) (lastPosition int) {
-	//find word in []byte
-	myWordByte := []byte(myWordString)
-	foundWord := false
-
-	for linePosition := 0; linePosition < len(line)-len(myWordByte); linePosition++ {
-		wordPosition := 0
-		for {
-
-			//Since the iteration over the word using wordPosition as a counter will break out
-			// if there is a mismatch in the matching, we can be sure that the word was found
-			// if word position reaches the same value as the length of the word.
-			// And we can then return the result and exit.
-			if wordPosition >= len(myWordByte) {
-				fmt.Println("Reached the end of the word, breaking out of word loop", linePosition, wordPosition)
-				foundWord = true
-				lastPosition = linePosition + wordPosition
-				return lastPosition
-			}
-
-			//If there is no match break out of the loop imediatly, since there is no reason
-			// to continue if one fails. Better to break out of the inner for loop and start
-			// the iteration of the next charater and see if we are more lucky.
-			if line[linePosition+wordPosition] != myWordByte[wordPosition] {
-				break
-			}
-
-			wordPosition++
-		}
-
-		if foundWord {
-			fmt.Println("Breaking out of outer loop")
-			break
-		}
-	}
-	return 0
-}
-
 //chrPositions , finds the positions containing a chr in a string
 //
 func findChrPositions(s string, chr byte) (equalPosition []int) {
@@ -172,5 +127,4 @@ func (l *lexer) getAttributes() {
 	}
 
 	l.attributes.value = findLettersBetween(l.currentLine, nextChrPositions, nextNextChrPositions)
-	return
 }

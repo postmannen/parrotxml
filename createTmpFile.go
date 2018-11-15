@@ -1,83 +1,11 @@
-//Reading an xml file, and if there are multiple lines that
-// belong together we add them together so lexing them later
-// will be easir.
-// For example a description block can span several lines
-// each ending with a line break. Then we remove all line
-// breaks and combine them together before we return it to
-// as a single line.
-//
-// 05.1 Testing with preparing a new file to be used in main
-// with init function
-//
-// How to use
-// func main() {
-// 		//create a temporary file to work on
-// 		prepareTmpFile()
-//
-// }
-
 package main
 
 import (
 	"bufio"
 	"fmt"
 	"log"
-	"os"
 	"strings"
 )
-
-const originalFile string = "ardrone3.xml"
-const tmpFile string = "./testFile.txt"
-
-//PrepareTmpFile will create a tmp file with the original
-// data, but all leading spaces will be removed making it
-// easyer to lex it later.
-// A <description> tag will also be added to the lines that
-// have no tag.
-// If there are more lines with no tags spanning multiple
-// lines, they will be combined to a single longer line.
-func PrepareTmpFile(of string, tf string) {
-	fh, err := os.Open(of)
-	if err != nil {
-		log.Println("Error: failed opening file: ", err)
-	}
-	defer fh.Close()
-
-	tfh, err := os.Create(tf)
-	if err != nil {
-		log.Println("Error: creating file: ", err)
-	}
-	defer tfh.Close()
-
-	writeTmpFile(fh, tfh)
-}
-
-//writeTmpFile will prepare a new file without ending and
-// leading spaces. Will also combine lines that belong
-// together but are normally seperated with carriage return.
-//
-// Taking original file, and tmp file as input.
-func writeTmpFile(fh *os.File, tfh *os.File) error {
-	var err error
-	br := bufio.NewReader(fh)
-
-	for {
-		//Prepare a line or block from the original xml file and put in "s".
-		s, err := readBlock(br)
-		if err != nil {
-			log.Println("Error: ", err)
-			break
-		}
-
-		//Write the prepared line or block into the tmp file as a string.
-		_, err = tfh.WriteString(s)
-		if err != nil {
-			log.Fatal("Error: writing to tmp file: ", err)
-
-		}
-	}
-	return err
-}
 
 //readBlock will check for ending brackets,and if no such
 // exist on the same line it will combine the line with
