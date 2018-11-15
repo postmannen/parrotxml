@@ -13,6 +13,11 @@ type tag struct {
 	token string
 }
 
+type attributes struct {
+	name  []string
+	value []string
+}
+
 var tagsStart = []tag{
 	tag{name: "<project", token: "projectStart"},
 	tag{name: "<class", token: "classStart"},
@@ -37,6 +42,8 @@ type lexer struct {
 	currentLine string
 	nextLine    string
 	bufReader   *bufio.Reader
+	tag
+	attributes
 }
 
 //readLines will allways read the next line, by copying to previous nextLine into currentLine,
@@ -88,11 +95,11 @@ func main() {
 		for i := range tagsStart {
 			foundTag = findTag(tagsStart[i].name, lex.currentLine)
 			if foundTag {
-				attributeNames, attributeValues := getAttributes(string(lex.currentLine))
+				lex.getAttributes()
 				fmt.Println("-----------------------------------------------------------------")
 				tagStack.push(tagsStart[i].token)
 				fmt.Println("--- Tag: ", tagsStart[i].token)
-				fmt.Printf("--- Attributes: name : %v, value %v \n", attributeNames, attributeValues)
+				fmt.Printf("--- Attributes: name : %v, value %v \n", lex.attributes.name, lex.attributes.value)
 			}
 		}
 

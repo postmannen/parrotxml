@@ -145,10 +145,10 @@ func findLettersBetween(s string, firstPositions []int, secondPositions []int) (
 // values as two different slices. Reason for using slices and
 // not maps are to preserve the order.
 //
-func getAttributes(s string) (attributeNames []string, attributeValues []string) {
+func (l *lexer) getAttributes() {
 	//Find the positions where there is an equal sign in the string
-	equalPositions := findChrPositions(s, '=')
-	preChrPositions := findPriorOccurance(s, ' ', equalPositions)
+	equalPositions := findChrPositions(l.currentLine, '=')
+	preChrPositions := findPriorOccurance(l.currentLine, ' ', equalPositions)
 
 	//==============find the word before the equal sign==============================
 
@@ -158,19 +158,19 @@ func getAttributes(s string) (attributeNames []string, attributeValues []string)
 		preChrPositions[i]++
 	}
 
-	attributeNames = findLettersBetween(s, preChrPositions, equalPositions)
+	l.attributes.name = findLettersBetween(l.currentLine, preChrPositions, equalPositions)
 
 	// =================find the word after the equal and between " "===========================
 
-	nextChrPositions := findNextOccurance(s, '"', equalPositions)
-	nextNextChrPositions := findNextOccurance(s, '"', nextChrPositions)
+	nextChrPositions := findNextOccurance(l.currentLine, '"', equalPositions)
+	nextNextChrPositions := findNextOccurance(l.currentLine, '"', nextChrPositions)
 
-	//We need to add 2 to all the pre positions, since the word we're
+	//We need to add 1 to all the pre positions, since the word we're
 	// looking for starts after that character.
 	for i := range nextChrPositions {
 		nextChrPositions[i] = nextChrPositions[i] + 1
 	}
 
-	attributeValues = findLettersBetween(s, nextChrPositions, nextNextChrPositions)
+	l.attributes.value = findLettersBetween(l.currentLine, nextChrPositions, nextNextChrPositions)
 	return
 }
