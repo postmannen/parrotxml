@@ -107,18 +107,30 @@ func main() {
 			if foundTag {
 				lex.tag = tagsStart[i]
 
-				//If it is a comment block it spans several lines, and we want to combine
+				// If it is a comment block it spans several lines, and we want to combine
 				// them before we lex for the attributes.
 				if lex.tag.token == "commentStart" {
 					lex.combineCommentLines()
 				}
-
 				lex.getAttributes()
 				fmt.Println("-----------------------------------------------------------------")
 				tagStack.push(tagsStart[i].token)
-				//fmt.Println("--- Tag: ", tagsStart[i].token)
-				//fmt.Printf("--- Attributes: name : %v, value %v \n", lex.attributes.name, lex.attributes.value)
 				fmt.Printf("lex.tag = %#v\n .attr name %#v\n .attr value = %#v\n", lex.tag, lex.attributes.name, lex.attributes.value)
+
+				// Check if there are descriptions after the opening tag. Descriptions
+				// Descriptions have no < or >, and normally come after a line with
+				// both < and >.
+				//
+				if strings.HasPrefix(lex.currentLine, "<") &&
+					strings.HasSuffix(lex.currentLine, ">") &&
+					!strings.HasPrefix(lex.nextLine, "<") {
+					fmt.Println("-------FOUND DESCRIPTIONS")
+					fmt.Println(lex.nextLine)
+					lex.combineDescriptionLines()
+					fmt.Println(" --- FOUND DESCRIPTION: ", lex.description)
+					fmt.Println("-------")
+
+				}
 			}
 		}
 

@@ -130,7 +130,7 @@ func (l *lexer) getAttributes() {
 	l.attributes.value = findLettersBetween(l.currentLine, nextChrPositions, nextNextChrPositions)
 }
 
-//readCommentBlock will read another line, and add that line to the current line.
+//combineCommentLines will read another line, and add that line to the current line.
 // If an end tag "/>" is found, it will break out of the for loop, and exit.
 func (l *lexer) combineCommentLines() {
 	newLine := l.currentLine
@@ -144,6 +144,28 @@ func (l *lexer) combineCommentLines() {
 		err := l.readLines()
 		if err != nil {
 			fmt.Println("Error: failed reading line inside readComment func: ", err)
+			break
+		}
+
+	}
+}
+
+//combineDescriptionLines will read another line, and add that line to the current line.
+// If an end tag "/>" is found, it will break out of the for loop, and exit.
+func (l *lexer) combineDescriptionLines() {
+
+	newLine := ""
+	for {
+		// If nextLine have no close at the end, read another line pair.
+		err := l.readLines()
+		if err != nil {
+			fmt.Println("Error: failed reading line inside readComment func: ", err)
+			break
+		}
+
+		newLine = fmt.Sprintf("%v %v", newLine, l.currentLine)
+		if strings.HasPrefix(l.nextLine, "<") {
+			l.description = newLine + "\n"
 			break
 		}
 
