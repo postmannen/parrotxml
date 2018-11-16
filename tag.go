@@ -20,7 +20,7 @@ func newTagStack() *tagStack {
 //push will add another item to the end of the stack with a normal append
 func (s *tagStack) push(d string) {
 	s.data = append(s.data, d)
-	fmt.Printf("DEBUG: PUSH on stack : %#v\n", s)
+	fmt.Printf(" --- : PUSH on stack : %#v\n", s)
 }
 
 //pop will remove the last element of the stack
@@ -28,7 +28,7 @@ func (s *tagStack) pop() {
 	//fmt.Println("DEBUG: Before pop:", s)
 	last := len(s.data)
 	// ---
-	fmt.Printf("DEBUG: POP stack:%#v\n", s)
+	fmt.Printf(" --- : POP stack:%#v\n", s)
 	s.data = append(s.data[0:0], s.data[:last-1]...)
 
 	//DEBUG BELOW

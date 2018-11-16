@@ -14,8 +14,9 @@ type tag struct {
 }
 
 type attributes struct {
-	name  []string
-	value []string
+	name        []string
+	value       []string
+	description string
 }
 
 var tagsStart = []tag{
@@ -127,7 +128,7 @@ func main() {
 			if foundTag {
 				lex.tag = tagsEnd[i]
 				tagStack.pop()
-				fmt.Println(tagsEnd[i].token)
+				//fmt.Println(tagsEnd[i].token)
 			}
 		}
 
