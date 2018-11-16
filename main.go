@@ -101,22 +101,24 @@ func main() {
 
 		var foundTag bool
 
-		//Look for start tag.
+		// ====================== Look for start tag.
 		for i := range tagsStart {
 			foundTag = findTag(tagsStart[i].name, lex.currentLine)
 			if foundTag {
 				lex.tag = tagsStart[i]
 
+				fmt.Println("-----------------------------------------------------------------")
+				// ===================== Look for comments
 				// If it is a comment block it spans several lines, and we want to combine
 				// them before we lex for the attributes.
 				if lex.tag.token == "commentStart" {
 					lex.combineCommentLines()
 				}
 				lex.getAttributes()
-				fmt.Println("-----------------------------------------------------------------")
 				tagStack.push(tagsStart[i].token)
 				fmt.Printf("lex.tag = %#v\n .attr name %#v\n .attr value = %#v\n", lex.tag, lex.attributes.name, lex.attributes.value)
 
+				// ====================== Look for description
 				// Check if there are descriptions after the opening tag. Descriptions
 				// Descriptions have no < or >, and normally come after a line with
 				// both < and >.
