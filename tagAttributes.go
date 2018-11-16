@@ -133,21 +133,18 @@ func (l *lexer) getAttributes() {
 //readCommentBlock will read another line, and add that line to the current line.
 // If an end tag "/>" is found, it will break out of the for loop, and exit.
 func (l *lexer) combineCommentLines() {
-	fmt.Println("*********************************COMMENT**************************")
 	newLine := l.currentLine
 	for {
+		newLine = fmt.Sprintf("%v %v", newLine, l.nextLine)
+		if strings.HasSuffix(l.nextLine, "/>") {
+			l.currentLine = newLine + "\n"
+			break
+		}
+		// If nextLine have no close at the end, read another line pair.
 		err := l.readLines()
 		if err != nil {
 			fmt.Println("Error: failed reading line inside readComment func: ", err)
 			break
-		}
-
-		newLine = fmt.Sprintf("%v %v", newLine, l.currentLine)
-
-		if strings.HasSuffix(l.currentLine, "/>") {
-			l.currentLine = newLine
-			break
-
 		}
 
 	}
