@@ -115,8 +115,9 @@ func main() {
 				lex.getAttributes()
 				fmt.Println("-----------------------------------------------------------------")
 				tagStack.push(tagsStart[i].token)
-				fmt.Println("--- Tag: ", tagsStart[i].token)
-				fmt.Printf("--- Attributes: name : %v, value %v \n", lex.attributes.name, lex.attributes.value)
+				//fmt.Println("--- Tag: ", tagsStart[i].token)
+				//fmt.Printf("--- Attributes: name : %v, value %v \n", lex.attributes.name, lex.attributes.value)
+				fmt.Printf("lex.tag = %#v\n .attr name %#v\n .attr value = %#v\n", lex.tag, lex.attributes.name, lex.attributes.value)
 			}
 		}
 

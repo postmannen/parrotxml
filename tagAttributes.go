@@ -14,7 +14,7 @@ func findChrPositions(s string, chr byte) (equalPosition []int) {
 		if s[i] == byte(chr) {
 			//fmt.Println("DEBUG: line : ", s)
 			//
-			fmt.Println("DEBUG: chr = ", string(chr), " Found chr at", equalPosition)
+			//fmt.Println("DEBUG: chr = ", string(chr), " Found chr at", equalPosition)
 			equalPosition = append(equalPosition, i)
 		}
 	}
